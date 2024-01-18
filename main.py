@@ -1,7 +1,12 @@
+"""Main module for the API"""
+import logging
 from flask import Flask, request, jsonify
-from werkzeug.exceptions import BadRequest
-from policy_manager import PolicyManager
-from credit_policy import IncomeCheck, DebtCheck, PaymentRemarksCheck, AgeCheck
+from werkzeug.exceptions import BadRequest, UnsupportedMediaType
+from .policy_manager import PolicyManager
+from .credit_policy import IncomeCheck, DebtCheck, PaymentRemarksCheck, AgeCheck
+
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 
@@ -19,7 +24,17 @@ def check_policy():
     try:
         data = request.get_json()
     except BadRequest:
-        return jsonify({"error": "INVALID_JSON"})
+        logger.error("Invalid JSON received")
+        return jsonify({"error": "INVALID_JSON"}), 400
+    except UnsupportedMediaType:
+        logger.error("Invalid Content-Type received")
+        return jsonify({"error": "UNSUPPORTED_MEDIA_TYPE"}), 415
+    except Exception as error:
+        logger.error("Unknown error: %s", error)
+        return jsonify({"error": "UNKNOWN_ERROR"}), 500
+
+    logger.info("Request received successfully")
+    logger.debug("Request data: %s", data)
 
     policy_manager = PolicyManager()
 
