@@ -51,13 +51,11 @@ class PaymentRemarksCheck(CreditPolicy):
 
     def check(self, data):
         """Return a rejection message if the payment remarks are above the limit"""
-        if remarks_validation_error := self.validate(data, "payment_remarks", int):
-            return remarks_validation_error
+        remarks_validation_keys = ["payment_remarks", "payment_remarks_12m"]
 
-        if remarks_12m_validation_error := self.validate(
-            data, "payment_remarks_12m", int
-        ):
-            return remarks_12m_validation_error
+        for key in remarks_validation_keys:
+            if remarks_validation_error := self.validate(data, key, int):
+                return remarks_validation_error
 
         if data["payment_remarks_12m"] > 0:
             return jsonify({"message": "REJECT", "reason": "PAYMENT_REMARKS_12M"})
