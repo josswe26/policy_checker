@@ -49,7 +49,7 @@ class DebtCheck(CreditPolicy):
         if debt_validation_error := self.validate(data, "customer_debt", int):
             return debt_validation_error
 
-        if data["customer_debt"] > 1000:
+        if data["customer_debt"] > (data["customer_income"] * 0.5):
             logger.info("Debt policy has been rejected")
             return jsonify({"message": "REJECT", "reason": "HIGH_DEBT"})
         return None
