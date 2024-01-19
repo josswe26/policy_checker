@@ -2,8 +2,9 @@
 import logging
 from flask import Flask, request, jsonify
 from werkzeug.exceptions import BadRequest, UnsupportedMediaType
-from .policy_manager import PolicyManager
-from .credit_policy import IncomeCheck, DebtCheck, PaymentRemarksCheck, AgeCheck
+from policy.policy_manager import PolicyManager
+from policy.credit_policy import IncomeCheck, DebtCheck, PaymentRemarksCheck, AgeCheck
+
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
